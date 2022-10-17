@@ -21,7 +21,10 @@
     "lib": ["es2020", "dom"],
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-
+    "paths":{
+      "assert": ["./node_modules/assert"],
+      "stream":["node_modules/stream-browserify"],
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
