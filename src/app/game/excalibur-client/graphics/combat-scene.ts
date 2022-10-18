@@ -58,8 +58,8 @@ export class CombatScene extends Scene {
     const screenWidth = this.engine.screen.drawWidth;
     const screenHeight = this.engine.screen.drawHeight;
 
+    this.map.pos = vec(screenWidth / 2, screenHeight / 2);
     this.hand.pos = vec(screenWidth / 2, screenHeight - this.hand.realHeight / 2 - 5);
-
     this.deck.pos = vec(screenWidth - this.deck.realWidth / 2 - 5, screenHeight - this.deck.realHeight / 2 - 5);
     this.discard.pos = vec(this.discard.realWidth / 2 + 5, screenHeight - this.discard.realHeight / 2 - 5);
   }
