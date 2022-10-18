@@ -13,14 +13,11 @@ export class MapActor extends Actor {
     return this.map ? this.map.size * this.cells[0].realHeight + this.gap * (this.map.size - 1) : 0;
   }
 
-  get selectedCell(): number {
-    return this.selected;
-  }
-
   private map: CombatMap;
   private engine: Engine;
 
   private cells: CellActor[];
+  private hovered: number = -1;
   private selected: number = -1;
 
   private readonly cellSize = 25;
@@ -41,8 +38,9 @@ export class MapActor extends Actor {
       this.cells = [];
 
       for (let i = 0; i < this.map.size * this.map.size; i++) {
-        const cell = new CellActor(this.cellSize);
+        const cell = new CellActor(this.cellSize, this.gap);
 
+        cell.hovered$.subscribe(b => (b ? this.hover(i) : this.unhover(i)));
         cell.clicked$.subscribe(() => this.select(i));
 
         this.addChild(cell);
@@ -53,13 +51,42 @@ export class MapActor extends Actor {
     this.placeCells();
   }
 
+  private unhover(i: number) {
+    if (i >= 0 && i < this.cells.length && i !== this.selected) {
+      this.cells[i].setHighlightState('none');
+    }
+  }
+
+  private hover(i: number) {
+    if (i >= this.cells.length) {
+      return;
+    }
+
+    if (i < 0) {
+      this.hovered = -1;
+      return;
+    }
+
+    this.hovered = i;
+
+    if (i === this.selected) {
+      return;
+    }
+
+    this.cells[i].setHighlightState('light');
+  }
+
   private select(i: number) {
     if (i >= this.cells.length) {
       return;
     }
 
     if (this.selected >= 0) {
-      this.cells[this.selected].highlight(false);
+      if (this.selected === this.hovered) {
+        this.cells[this.selected].setHighlightState('light');
+      } else {
+        this.cells[this.selected].setHighlightState('none');
+      }
     }
 
     if (i < 0) {
@@ -67,7 +94,7 @@ export class MapActor extends Actor {
       return;
     }
 
-    this.cells[i].highlight(true);
+    this.cells[i].setHighlightState('strong');
     this.selected = i;
   }
 

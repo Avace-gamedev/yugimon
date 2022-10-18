@@ -54,7 +54,7 @@ export class CardActor extends Actor {
       color: Color.LightGray,
       collisionType: CollisionType.PreventCollision,
     });
-    this.hoveredActor.graphics.visible = false;
+    this.hoveredActor.graphics.opacity = 0;
     this.addChild(this.hoveredActor);
 
     this.highlightedActor = new Actor({
@@ -64,7 +64,7 @@ export class CardActor extends Actor {
       color: Color.White,
       collisionType: CollisionType.PreventCollision,
     });
-    this.highlightedActor.graphics.visible = false;
+    this.highlightedActor.graphics.opacity = 0;
     this.addChild(this.highlightedActor);
 
     this.background = new Actor({
@@ -150,7 +150,12 @@ export class CardActor extends Actor {
   }
 
   private updateSelectionState() {
-    this.hoveredActor.graphics.visible = this.hovered && !this.highlighted;
-    this.highlightedActor.graphics.visible = this.highlighted;
+    const hoveredActorTargetOpacity = this.hovered && !this.highlighted ? 1 : 0;
+    this.hoveredActor.actions.clearActions();
+    this.hoveredActor.actions.fade(hoveredActorTargetOpacity, 50);
+
+    const highlightedActorTargetOpacity = this.highlighted ? 1 : 0;
+    this.highlightedActor.actions.clearActions();
+    this.highlightedActor.actions.fade(highlightedActorTargetOpacity, 50);
   }
 }
