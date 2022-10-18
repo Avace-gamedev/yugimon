@@ -4,16 +4,19 @@ import { CharacterState, CombatParams, CombatState, Player } from './combat';
 import { shuffle } from '../deck/deck-utils';
 import { INVALID_MOVE } from 'boardgame.io/core';
 import { isEntityCard } from '../deck/card';
+import { DEFAULT_MAP } from '../map/combat-map';
 
 export class CombatBuilder {
   constructor(private player: Character, private opponent: Character, private params: CombatParams = null) {}
 
   build(): Game<CombatState> {
     return {
-      setup: ({ ctx }) => {
+      setup: ({ _ }) => {
         return {
           playerState: initialCharacterState(this.player),
           opponentState: initialCharacterState(this.opponent),
+
+          map: this.params?.map ?? DEFAULT_MAP,
         };
       },
 
@@ -22,8 +25,8 @@ export class CombatBuilder {
           start: true,
 
           onBegin: ({ G }) => {
-            draw(G.playerState, this.params?.deckSize ?? 6);
-            draw(G.opponentState, this.params?.deckSize ?? 6);
+            draw(G.playerState, this.params?.startingHandSize ?? 6);
+            draw(G.opponentState, this.params?.startingHandSize ?? 6);
           },
         },
       },

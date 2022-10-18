@@ -5,6 +5,9 @@ import { Character } from '../../../backend/character/character';
 import { Client } from 'boardgame.io/client';
 import { CombatScene } from './graphics/combat-scene';
 import { EntityCard } from '../../../backend/deck/card';
+import { _ClientImpl } from 'boardgame.io/dist/types/src/client/client';
+import { CombatState } from '../../../backend/combat/combat';
+import { DevTool } from '@excaliburjs/dev-tools';
 
 @Component({
   selector: 'app-excalibur-client',
@@ -13,6 +16,7 @@ import { EntityCard } from '../../../backend/deck/card';
 })
 export class ExcaliburClientComponent implements OnInit {
   private engine: Engine;
+  private devTool: DevTool;
 
   constructor() {}
 
@@ -24,18 +28,21 @@ export class ExcaliburClientComponent implements OnInit {
       displayMode: DisplayMode.FillScreen,
     });
 
-    const combat = new CombatScene();
+    const combat = new CombatScene(client);
     this.engine.add('combat', combat);
 
     this.engine.start().then(() => {
       this.engine.goToScene('combat');
-
-      combat.updateState(client.getInitialState());
-      client.subscribe(state => combat.updateState(state));
     });
   }
 
-  private createGame() {
+  openDevTool() {
+    if (!this.devTool) {
+      this.devTool = new DevTool(this.engine);
+    }
+  }
+
+  private createGame(): _ClientImpl<CombatState> {
     const player: Character = {
       name: 'Player',
       deck: {
