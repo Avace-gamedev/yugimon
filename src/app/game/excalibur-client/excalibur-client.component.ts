@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { DisplayMode, Engine, Scene } from 'excalibur';
+import { DisplayMode, Engine } from 'excalibur';
 import { CombatBuilder } from '../../../backend/combat/combat-builder';
 import { Character } from '../../../backend/character/character';
 import { Client } from 'boardgame.io/client';
-import { CombatGraphics } from './graphics/combat-graphics';
+import { CombatScene } from './graphics/combat-scene';
 import { EntityCard } from '../../../backend/deck/card';
 
 @Component({
@@ -17,11 +17,25 @@ export class ExcaliburClientComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    const client = this.createGame();
+
     this.engine = new Engine({
       canvasElementId: 'game',
       displayMode: DisplayMode.FillScreen,
     });
 
+    const combat = new CombatScene();
+    this.engine.add('combat', combat);
+
+    this.engine.start().then(() => {
+      this.engine.goToScene('combat');
+
+      combat.updateState(client.getInitialState());
+      client.subscribe(state => combat.updateState(state));
+    });
+  }
+
+  private createGame() {
     const player: Character = {
       name: 'Player',
       deck: {
@@ -36,17 +50,10 @@ export class ExcaliburClientComponent implements OnInit {
       },
     };
 
-    const combatScene = new Scene();
-    const combat = new CombatGraphics(combatScene);
-
     const game = new CombatBuilder(player, opponent).build();
     const client = Client({ game });
     client.start();
 
-    combat.initialize(client.getInitialState());
-
-    client.subscribe(state => combat.update(state));
-
-    this.engine.start();
+    return client;
   }
 }

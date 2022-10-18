@@ -3,6 +3,7 @@ export type CardType = 'entity';
 export interface Card<T extends CardType = any> {
   readonly type?: T;
   readonly name: string;
+  readonly cost: number;
 }
 
 export interface EntityCard extends Card<'entity'> {
@@ -20,5 +21,6 @@ export const isEntityCard = (card: Card): card is EntityCard => {
 const DEFAULT_ENTITY_CARD: EntityCard = {
   type: 'entity',
   name: 'ENTITY',
+  cost: 1,
   hp: 1,
 };
