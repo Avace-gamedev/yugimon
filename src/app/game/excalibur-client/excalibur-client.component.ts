@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, isDevMode, OnInit } from '@angular/core';
 import { DisplayMode, Engine } from 'excalibur';
 import { CombatBuilder } from '../../../backend/combat/combat-builder';
 import { Character } from '../../../backend/character/character';
@@ -15,8 +15,13 @@ import { DevTool } from '@excaliburjs/dev-tools';
   styleUrls: ['./excalibur-client.component.scss'],
 })
 export class ExcaliburClientComponent implements OnInit {
+  get debugMode() {
+    return isDevMode();
+  }
+
+  devTool: DevTool;
+
   private engine: Engine;
-  private devTool: DevTool;
 
   constructor() {}
 

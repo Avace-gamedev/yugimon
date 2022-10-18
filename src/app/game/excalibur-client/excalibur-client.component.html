@@ -1,7 +1,7 @@
 <canvas id="game"></canvas>
 
-<div class="absolute top-0 left-O pt-1 pl-1">
-  <button mat-stroked-button (click)="openDevTool()">
+<div class="absolute top-0 left-O pt-1 pl-1" *ngIf="debugMode">
+  <button mat-stroked-button (click)="openDevTool()" class="bg-white" *ngIf="!devTool">
     DevTool
   </button>
 </div>

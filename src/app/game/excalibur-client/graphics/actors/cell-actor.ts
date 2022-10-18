@@ -19,8 +19,7 @@ export class CellActor extends Actor {
   }
 
   private pointerTarget: Actor;
-  private hoveredActor: Actor;
-  private highlightedActor: Actor;
+  private highlightActor: Actor;
   private background: Actor;
 
   private hoveredSubject: Subject<boolean> = new Subject<boolean>();
@@ -53,25 +52,15 @@ export class CellActor extends Actor {
       this.clickedSubject.next(void 0);
     });
 
-    this.hoveredActor = new Actor({
-      width: this.realWidth + 2,
-      height: this.realHeight + 2,
-      pos: vec(0, 0),
-      color: Color.LightGray,
-      collisionType: CollisionType.PreventCollision,
-    });
-    this.hoveredActor.graphics.opacity = 0;
-    this.addChild(this.hoveredActor);
-
-    this.highlightedActor = new Actor({
+    this.highlightActor = new Actor({
       width: this.realWidth + 2,
       height: this.realHeight + 2,
       pos: vec(0, 0),
       color: Color.White,
       collisionType: CollisionType.PreventCollision,
     });
-    this.highlightedActor.graphics.opacity = 0;
-    this.addChild(this.highlightedActor);
+    this.highlightActor.graphics.opacity = 0;
+    this.addChild(this.highlightActor);
 
     this.background = new Actor({
       width: this.realWidth,
@@ -92,27 +81,21 @@ export class CellActor extends Actor {
   }
 
   private updateSelectionState() {
-    let hovered: boolean = false;
-    let highlighted: boolean = false;
+    let targetOpacity: number = 0;
     switch (this.highlightState) {
       case 'light':
-        hovered = true;
+        targetOpacity = 0.5;
         break;
       case 'strong':
-        highlighted = true;
+        targetOpacity = 1;
         break;
     }
 
-    if (hovered || this.hoveredActor.actions.getQueue().getActions().length > 2) {
-      this.hoveredActor.actions.clearActions();
+    if (targetOpacity > 0 || this.highlightActor.actions.getQueue().getActions().length > 2) {
+      this.highlightActor.actions.clearActions();
     }
 
-    if (highlighted || this.highlightedActor.actions.getQueue().getActions().length > 2) {
-      this.highlightedActor.actions.clearActions();
-    }
-
-    this.hoveredActor.actions.getQueue().add(new Fade(this.hoveredActor, hovered ? 1 : 0, 200));
-    this.highlightedActor.actions.getQueue().add(new Fade(this.highlightedActor, highlighted ? 1 : 0, 200));
+    this.highlightActor.actions.getQueue().add(new Fade(this.highlightActor, targetOpacity, 200));
   }
 }
 
