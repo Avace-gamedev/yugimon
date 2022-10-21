@@ -1,3 +1,3 @@
 # Yugimon
 
-http://ismailbennani.github.io/yugimon
+https://avace-gamedev.github.io/yugimon/home
